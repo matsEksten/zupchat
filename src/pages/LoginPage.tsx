@@ -1,13 +1,21 @@
 import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { useLogin } from "../hooks/useLogin";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    console.log(email, password);
+  const { login, isPending, error } = useLogin();
+  const navigate = useNavigate();
 
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const user = await login(email, password);
+
+    if (!user) return;
+
+    navigate("/profile");
     setEmail("");
     setPassword("");
   };
@@ -37,13 +45,28 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
-        <button
-          type="submit"
-          className="mt-4 py-2 px-4 rounded-md bg-blue-600 text-sm font-medium"
-        >
-          Login
-        </button>
+        {isPending ? (
+          <button
+            type="submit"
+            disabled
+            className="mt-4 py-2 px-4 rounded-md bg-blue-500 text-sm font-medium"
+          >
+            Loading
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className="mt-4 py-2 px-4 rounded-md bg-blue-600 text-sm font-medium"
+          >
+            Login
+          </button>
+        )}
       </form>
+      {error ? (
+        <p className="text-white bg-red-500 py-1 px-2 mt-6">{error}</p>
+      ) : (
+        <p className="mt-6">&nbsp;</p>
+      )}
     </div>
   );
 }

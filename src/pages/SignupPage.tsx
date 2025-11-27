@@ -1,13 +1,21 @@
 import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSignup } from "../hooks/useSignup";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    console.log("signup:", email, password);
+  const { signup, error, isPending } = useSignup();
+  const navigate = useNavigate();
 
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const user = await signup(email, password);
+
+    if (!user) return;
+
+    navigate("/profile");
     setEmail("");
     setPassword("");
   };
@@ -37,13 +45,29 @@ export default function SignupPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
-        <button
-          type="submit"
-          className="mt-4 py-2 px-4 rounded-md bg-blue-600 text-sm font-medium"
-        >
-          Sign up
-        </button>
+
+        {isPending ? (
+          <button
+            type="submit"
+            disabled
+            className="mt-4 py-2 px-4 rounded-md bg-blue-500 text-sm font-medium"
+          >
+            Loading
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className="mt-4 py-2 px-4 rounded-md bg-blue-600 text-sm font-medium"
+          >
+            Sign up
+          </button>
+        )}
       </form>
+      {error ? (
+        <p className="text-white bg-red-500 py-1 px-2 mt-6">{error}</p>
+      ) : (
+        <p className="mt-6">&nbsp;</p>
+      )}
     </div>
   );
 }
