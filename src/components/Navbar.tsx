@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useLogout } from "../hooks/useLogout";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const location = useLocation();
@@ -10,6 +11,13 @@ export default function Navbar() {
 
   const { logout, isPending, error } = useLogout();
 
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+  };
+
   const menuOptions = () => {
     if (path === "/login") return <Link to="/signup">Sign up</Link>;
     if (path === "/signup") return <Link to="/login">Log in</Link>;
@@ -18,7 +26,7 @@ export default function Navbar() {
       return isPending ? (
         <button disabled>Logging out...</button>
       ) : (
-        <button onClick={logout}>Logout</button>
+        <button onClick={handleLogout}>Log out</button>
       );
     }
 
@@ -35,10 +43,6 @@ export default function Navbar() {
             alt="ZupChat logo"
           />
         </Link>
-
-        <div>
-          <p>{user ? `Logged in as ${user.email}` : "No user logged in"}</p>
-        </div>
 
         <div className="pr-2">{menuOptions()}</div>
       </nav>
