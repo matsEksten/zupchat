@@ -9,7 +9,7 @@ const firebaseConfig = {
   projectId: "zupchat-bd3de",
   storageBucket: "zupchat-bd3de.firebasestorage.app",
   messagingSenderId: "362889592732",
-  appId: "1:362889592732:web:cdb8e18c3cada9d4a35259"
+  appId: "1:362889592732:web:cdb8e18c3cada9d4a35259",
 };
 
 const app = initializeApp(firebaseConfig);

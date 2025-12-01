@@ -35,7 +35,7 @@ function App() {
           />
           <Route
             path="/signup"
-            element={user ? <Navigate to="/lobby" /> : <SignupPage />}
+            element={user ? <Navigate to="/profile" /> : <SignupPage />}
           />
           <Route
             path="/profile"
