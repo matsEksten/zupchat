@@ -2,6 +2,8 @@ import { useParams, Navigate } from "react-router-dom";
 import { useState } from "react";
 import { useMessages } from "../hooks/useMessages";
 import { useSendMessage } from "../hooks/useSendMessage";
+import MessageBubble from "../components/chat/MessageBubble";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 type RoomId = "heroverse" | "spaceverse" | "exclusiveverse";
 
@@ -21,8 +23,14 @@ export default function ChatRoomPage() {
   const { messages, error } = useMessages(roomId);
   const { sendMessage, isPending, error: sendError } = useSendMessage(roomId);
 
+  const { user } = useAuthContext();
+
   if (!roomId || !roomConfig) {
     return <Navigate to="/lobby" replace />;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,27 +47,32 @@ export default function ChatRoomPage() {
         {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
         <ul>
           {messages.length > 0 &&
-            messages.map((m) => (
-              <li key={m.id}>
-                <span className="bg-white text-black">{m.text}</span>
-              </li>
+            messages.map((message) => (
+              <MessageBubble
+                message={message}
+                isOwn={message.userId === user.uid}
+                key={message.id}
+              />
             ))}
         </ul>
       </section>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="flex items-center">
+        <button className="flex items-center justify-center bg-yellow-400 h-9 w-9 rounded-full pb-1 text-3xl cursor-pointer hover:bg-amber-300 transition">
+          +
+        </button>
         <input
           type="text"
           value={textMsg}
           onChange={(e) => setTextMsg(e.target.value)}
-          className="bg-white text-black"
+          className="flex-1 bg-white text-black mx-2 h-9 rounded-2xl px-3 focus:outline-none opacity-70 font-chat"
         />
         <button
           type="submit"
           disabled={isPending}
-          className="px-4 py-2 text-sm font-semibold rounded bg-blue-600 text-white disabled:opacity-50"
+          className="flex items-center justify-center h-9 w-9 bg-yellow-400 disabled:opacity-50 rounded-full cursor-pointer hover:bg-amber-300 transition"
         >
-          Send
+          ➤
         </button>
       </form>
 
