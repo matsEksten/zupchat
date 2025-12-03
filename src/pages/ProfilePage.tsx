@@ -4,6 +4,10 @@ import { upsertUserProfile, getUserProfile } from "../services/userService";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { Spinner } from "../components/Spinner";
 import { uploadProfilePhoto } from "../services/photoUploadService";
+import { useDeleteAccount } from "../hooks/useDeleteAccount";
+import { storage } from "../firebase/config";
+import { ref, deleteObject } from "firebase/storage";
+import { updateProfile } from "firebase/auth";
 
 type ProfileMode = "loading" | "error" | "onboarding" | "update";
 
@@ -16,8 +20,11 @@ export const ProfilePage = () => {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [thumbnailError, setThumbnailError] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const { user } = useAuthContext();
+
+  const { deleteAccount, isDeleting, error: deleteError } = useDeleteAccount();
 
   const navigate = useNavigate();
 
@@ -52,12 +59,11 @@ export const ProfilePage = () => {
     e.preventDefault();
     setError(null);
 
-    if (!user) {
-      console.log("User must be logged in to view this page");
-      return;
-    }
+    if (!user) return;
 
-    if (!nickname.trim()) {
+    const trimmedNickname = nickname.trim();
+
+    if (!trimmedNickname) {
       setError("Nickname is required");
       return;
     }
@@ -65,24 +71,29 @@ export const ProfilePage = () => {
     try {
       setIsSaving(true);
 
+      let uploadedUrl: string | null = photoUrl ?? null;
+
       if (photoFile) {
-        const uploadedUrl = await uploadProfilePhoto(user.uid, photoFile);
-
+        uploadedUrl = await uploadProfilePhoto(user.uid, photoFile);
         setPhotoUrl(uploadedUrl);
-
-        await upsertUserProfile(user.uid, {
-          displayName: nickname.trim(),
-          email: user.email ?? "",
-          onBoarded: true,
-          photoURL: uploadedUrl,
-        });
-      } else {
-        await upsertUserProfile(user.uid, {
-          displayName: nickname.trim(),
-          email: user.email ?? "",
-          onBoarded: true,
-        });
       }
+
+      await upsertUserProfile(user.uid, {
+        displayName: trimmedNickname,
+        email: user.email ?? "",
+        onBoarded: true,
+        ...(uploadedUrl !== null ? { photoURL: uploadedUrl } : {}),
+      });
+
+      const updateData: { displayName: string; photoURL?: string | null } = {
+        displayName: trimmedNickname,
+      };
+
+      if (uploadedUrl !== null) {
+        updateData.photoURL = uploadedUrl;
+      }
+
+      await updateProfile(user, updateData);
 
       navigate("/lobby");
     } catch (err: unknown) {
@@ -124,6 +135,48 @@ export const ProfilePage = () => {
 
   const currentImage = photoPreview ?? photoUrl;
 
+  const handleDeleteClick = async () => {
+    if (!confirmDelete) {
+      setConfirmDelete(true);
+      return;
+    }
+
+    const success = await deleteAccount();
+
+    if (success) {
+      navigate("/");
+    }
+  };
+
+  const removePhoto = async () => {
+    if (photoPreview && !photoUrl) {
+      setPhotoPreview(null);
+      setPhotoFile(null);
+      return;
+    }
+
+    if (photoUrl && user) {
+      try {
+        const photoRef = ref(storage, photoUrl);
+        await deleteObject(photoRef);
+
+        await upsertUserProfile(user.uid, {
+          photoURL: null,
+        });
+
+        await updateProfile(user, {
+          photoURL: null,
+        });
+
+        setPhotoUrl(null);
+        setPhotoPreview(null);
+        setPhotoFile(null);
+      } catch (err) {
+        console.error("Failed to delete profile photo:", err);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col items-center">
       {mode === "loading" && (
@@ -153,6 +206,14 @@ export const ProfilePage = () => {
             />
           )}
         </div>
+        {photoUrl && (
+          <button
+            onClick={removePhoto}
+            className="text-white text-sm underline cursor-pointer"
+          >
+            Remove profile photo
+          </button>
+        )}
         <label className="flex flex-col items-center text-sm cursor-pointer">
           <span className="my-2 bg-blue-500 py-2 px-4 rounded-lg">
             {mode === "onboarding"
@@ -163,7 +224,7 @@ export const ProfilePage = () => {
             type="file"
             accept="image/*"
             onChange={handlePhotoChange}
-            className="text-xs bg-white text-black"
+            className="hidden"
           />
         </label>
         {thumbnailError && (
@@ -196,9 +257,26 @@ export const ProfilePage = () => {
         </button>
       </form>
       {mode === "update" && (
-        <button className="mt-2 border rounded px-3 py-1 disabled:opacity-60">
-          Delete account
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={handleDeleteClick}
+            disabled={isDeleting}
+            className={`mt-2 border rounded px-3 py-1 disabled:opacity-60 ${
+              confirmDelete ? "border-red-500 text-red-500" : ""
+            }`}
+          >
+            {isDeleting
+              ? "Deleting account..."
+              : confirmDelete
+              ? "Confirm delete account"
+              : "Delete account"}{" "}
+          </button>
+
+          {deleteError && (
+            <p className="text-red-500 text-sm mt-2">{deleteError}</p>
+          )}
+        </>
       )}
     </div>
   );

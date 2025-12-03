@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { getUserProfile } from "../services/userService";
 import type { ZupUser } from "../types/user";
@@ -24,9 +25,12 @@ export default function LobbyPage() {
           <h1 className="text-2xl font-bold">
             Welcome to the Lobby {profile.displayName}
           </h1>
-          <button className="bg-cyan-200 text-black py-2 px-6 rounded-xl mt-3">
+          <Link
+            to="/rooms/heroverse"
+            className="bg-cyan-200 text-black py-2 px-6 rounded-xl mt-3"
+          >
             Heroverse
-          </button>
+          </Link>
         </>
       )}
     </div>
