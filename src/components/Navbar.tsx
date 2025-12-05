@@ -38,7 +38,7 @@ export default function Navbar() {
         sticky top-0 z-20
         ${
           isChatRoute
-            ? "bg-black/90 border-dashed border-b-4 border-yellow-400"
+            ? "bg-black/70 border-dashed border-b-4 border-yellow-400"
             : ""
         }
       `}

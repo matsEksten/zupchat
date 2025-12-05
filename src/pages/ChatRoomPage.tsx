@@ -5,6 +5,7 @@ import { useSendMessage } from "../hooks/useSendMessage";
 import MessageBubble from "../components/chat/MessageBubble";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useDeleteMessage } from "../hooks/useDeleteMessage";
+import { VerseBackground } from "../components/VerseBackground";
 
 type RoomId = "heroverse" | "spaceverse" | "exclusiveverse";
 
@@ -53,8 +54,9 @@ export default function ChatRoomPage() {
   };
 
   return (
-    <>
-      <div className="min-h-[calc(100vh-4rem)] px-4 py-6 flex flex-col">
+    <div className="relative min-h-screen">
+      {roomId === "heroverse" && <VerseBackground verse="heroverse" />}
+      <div className="relative z-10 min-h-[calc(100vh-4rem)] px-4 py-6 flex flex-col">
         <h1 className="text-2xl font-bold text-white">{roomConfig.label}</h1>
 
         <section className="flex-1 overflow-y-auto mb-2">
@@ -78,7 +80,7 @@ export default function ChatRoomPage() {
         <form onSubmit={handleSubmit} className="flex items-center">
           <button
             type="button"
-            className="flex items-center justify-center bg-yellow-400 h-9 w-9 rounded-full pb-1 text-3xl cursor-pointer hover:bg-amber-300 transition"
+            className="flex items-center justify-center bg-amber-400 h-9 w-9 rounded-full pb-1 text-3xl cursor-pointer hover:bg-amber-300 transition"
           >
             +
           </button>
@@ -87,13 +89,13 @@ export default function ChatRoomPage() {
             type="text"
             value={textMsg}
             onChange={(e) => setTextMsg(e.target.value)}
-            className="flex-1 bg-white text-black mx-2 h-9 rounded-2xl px-3 focus:outline-none opacity-70 font-chat"
+            className="flex-1 bg-white text-black mx-2 h-9 rounded-2xl px-3 focus:outline-none opacity-80 font-chat"
           />
 
           <button
             type="submit"
             disabled={isPending}
-            className="flex items-center justify-center h-9 w-9 bg-yellow-400 disabled:opacity-50 rounded-full cursor-pointer hover:bg-amber-300 transition"
+            className="flex items-center justify-center h-9 w-9 bg-amber-400 disabled:opacity-50 rounded-full cursor-pointer hover:bg-amber-300 transition"
           >
             ➤
           </button>
@@ -102,6 +104,6 @@ export default function ChatRoomPage() {
         {sendError && <p className="text-red-400 text-xs mt-1">{sendError}</p>}
       </div>
       <div ref={bottomRef} />
-    </>
+    </div>
   );
 }

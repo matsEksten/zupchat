@@ -28,7 +28,7 @@ export default function MessageBubble({
     `}
       >
         {!isOwn && (
-          <span className="block text-purple-400 text-left ml-1 font-chat">
+          <span className="block text-white text-left ml-1 font-chat">
             {message.userNickname}
           </span>
         )}
@@ -41,7 +41,7 @@ export default function MessageBubble({
         rounded-2xl
         text-lg
         shadow-sm
-        ${isOwn ? "bg-yellow-400 text-black" : "bg-white text-black"}
+        ${isOwn ? "bg-amber-400 text-black" : "bg-white text-black"}
         z-10
         font-chat
         break-all
