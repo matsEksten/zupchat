@@ -1,7 +1,6 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useLogout } from "../hooks/useLogout";
-import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const location = useLocation();
@@ -18,6 +17,8 @@ export default function Navbar() {
     navigate("/");
   };
 
+  const isChatRoute = path.startsWith("/rooms/");
+
   const menuOptions = () => {
     if (path === "/login") return <Link to="/signup">Sign up</Link>;
     if (path === "/signup") return <Link to="/login">Log in</Link>;
@@ -29,20 +30,40 @@ export default function Navbar() {
         <button onClick={handleLogout}>Log out</button>
       );
     }
+    if (isChatRoute) return <Link to="/lobby">Leave room</Link>;
 
     return null;
   };
 
   return (
-    <header>
+    <header
+      className={`
+        sticky top-0 z-20
+        ${
+          isChatRoute
+            ? "bg-black/90 border-dashed border-b-4 border-yellow-400"
+            : ""
+        }
+      `}
+    >
       <nav className="h-16 flex items-center justify-between px-2">
-        <Link to="/">
-          <img
-            src="/images/ZupChatTextLogoWhite.png"
-            className="h-12"
-            alt="ZupChat logo"
-          />
-        </Link>
+        {isChatRoute ? (
+          <div>
+            <img
+              src="/images/ZupChatTextLogoWhite.png"
+              className="h-12"
+              alt="ZupChat logo"
+            />
+          </div>
+        ) : (
+          <Link to="/">
+            <img
+              src="/images/ZupChatTextLogoWhite.png"
+              className="h-12"
+              alt="ZupChat logo"
+            />
+          </Link>
+        )}
 
         <div className="pr-2">{menuOptions()}</div>
       </nav>

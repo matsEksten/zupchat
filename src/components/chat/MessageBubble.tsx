@@ -3,9 +3,14 @@ import type { ZupMessage } from "../../types/message";
 type MessageBubbleProps = {
   message: ZupMessage;
   isOwn: boolean;
+  onDelete?: () => void;
 };
 
-export default function MessageBubble({ message, isOwn }: MessageBubbleProps) {
+export default function MessageBubble({
+  message,
+  isOwn,
+  onDelete,
+}: MessageBubbleProps) {
   const avatarUrl = message.userPhotoURL ?? "/images/avatar.png";
   return (
     <li
@@ -32,7 +37,7 @@ export default function MessageBubble({ message, isOwn }: MessageBubbleProps) {
           className={`
         relative
         inline-block
-        py-2 px-4
+        ${isOwn ? "pt-6 pb-2 px-4" : "py-2 px-4"}
         rounded-2xl
         text-lg
         shadow-sm
@@ -43,6 +48,15 @@ export default function MessageBubble({ message, isOwn }: MessageBubbleProps) {
       `}
         >
           {message.text}
+
+          {isOwn && (
+            <span
+              className="absolute -top-2.5 right-0 p-2 text-red-500 font-bold text-2xl cursor-pointer"
+              onClick={onDelete}
+            >
+              ✕
+            </span>
+          )}
 
           <span
             className={`
