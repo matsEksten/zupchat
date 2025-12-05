@@ -3,8 +3,10 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
+console.log("API KEY I ENV:", import.meta.env.VITE_FIREBASE_API_KEY);
+
 const firebaseConfig = {
-  apiKey: "AIzaSyAJRtmr7t-x8YPXkfqaaSaPwTayGG3bbuQ",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "zupchat-bd3de.firebaseapp.com",
   projectId: "zupchat-bd3de",
   storageBucket: "zupchat-bd3de.firebasestorage.app",
