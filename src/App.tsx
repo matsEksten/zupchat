@@ -12,45 +12,54 @@ import ChatRoomPage from "./pages/ChatRoomPage";
 
 function App() {
   const location = useLocation();
-  const isLanding = location.pathname === "/";
+  const isPublicAuth =
+    location.pathname === "/" ||
+    location.pathname === "/login" ||
+    location.pathname === "/signup";
   const { user } = useAuthContext();
   return (
     <div
       className={
-        isLanding
-          ? "min-h-screen bg-linear-to-br from-black to-blue-800 flex flex-col"
+        isPublicAuth
+          ? "min-h-screen flex flex-col relative bg-cover bg-position-[74%_center] md:bg-center bg-no-repeat bg-[url('/backgrounds/landingpage/bg-landing.webp')]"
           : "min-h-screen flex flex-col"
       }
     >
-      <Navbar />
-      <main>
-        <Routes>
-          <Route
-            path="/"
-            element={user ? <Navigate to="/lobby" /> : <LandingPage />}
-          />
-          <Route
-            path="/login"
-            element={user ? <Navigate to="/lobby" /> : <LoginPage />}
-          />
-          <Route
-            path="/signup"
-            element={user ? <Navigate to="/profile" /> : <SignupPage />}
-          />
-          <Route
-            path="/profile"
-            element={!user ? <Navigate to="/" /> : <ProfilePage />}
-          />
-          <Route
-            path="/lobby"
-            element={!user ? <Navigate to="/" /> : <LobbyPage />}
-          />
-          <Route
-            path="/rooms/:roomId"
-            element={!user ? <Navigate to="/" /> : <ChatRoomPage />}
-          />
-        </Routes>
-      </main>
+      {isPublicAuth && (
+        <div className="pointer-events-none absolute inset-0 bg-black/15" />
+      )}
+
+      <div className={isPublicAuth ? "relative z-10" : ""}>
+        <Navbar />
+        <main>
+          <Routes>
+            <Route
+              path="/"
+              element={user ? <Navigate to="/lobby" /> : <LandingPage />}
+            />
+            <Route
+              path="/login"
+              element={user ? <Navigate to="/lobby" /> : <LoginPage />}
+            />
+            <Route
+              path="/signup"
+              element={user ? <Navigate to="/profile" /> : <SignupPage />}
+            />
+            <Route
+              path="/profile"
+              element={!user ? <Navigate to="/" /> : <ProfilePage />}
+            />
+            <Route
+              path="/lobby"
+              element={!user ? <Navigate to="/" /> : <LobbyPage />}
+            />
+            <Route
+              path="/rooms/:roomId"
+              element={!user ? <Navigate to="/" /> : <ChatRoomPage />}
+            />
+          </Routes>
+        </main>
+      </div>
     </div>
   );
 }
