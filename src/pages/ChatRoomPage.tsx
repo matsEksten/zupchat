@@ -5,7 +5,9 @@ import { useSendMessage } from "../hooks/useSendMessage";
 import MessageBubble from "../components/chat/MessageBubble";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useDeleteMessage } from "../hooks/useDeleteMessage";
-import { VerseBackground } from "../components/VerseBackground";
+// import { VerseBackground } from "../components/VerseBackground";
+import { addSystemMessage } from "../services/chatService";
+import { formatTime } from "../utils/formatTime";
 
 type RoomId = "heroverse" | "spaceverse" | "exclusiveverse";
 
@@ -37,12 +39,27 @@ export default function ChatRoomPage() {
     bottomRef.current.scrollIntoView();
   }, [messages.length]);
 
+  useEffect(() => {
+    if (!user || !roomId) return;
+    if (!user.displayName) return;
+
+    addSystemMessage(roomId, `${user.displayName} joined the room`);
+
+    return () => {
+      addSystemMessage(roomId, `${user.displayName} left the room`);
+    };
+  }, [user, roomId]);
+
   if (!roomId || !roomConfig) {
     return <Navigate to="/lobby" replace />;
   }
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (!user.displayName) {
+    return <Navigate to="/profile" replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,7 +72,7 @@ export default function ChatRoomPage() {
 
   return (
     <div className="relative min-h-screen">
-      {roomId === "heroverse" && <VerseBackground verse="heroverse" />}
+      {/* roomId === "heroverse" && <VerseBackground verse="heroverse" /> */}
       <div className="relative z-10 min-h-[calc(100vh-4rem)] px-4 py-6 flex flex-col">
         <h1 className="text-2xl font-bold text-white">{roomConfig.label}</h1>
 
@@ -66,14 +83,34 @@ export default function ChatRoomPage() {
           )}
           <ul>
             {messages.length > 0 &&
-              messages.map((message) => (
-                <MessageBubble
-                  key={message.id}
-                  message={message}
-                  isOwn={message.userId === user.uid}
-                  onDelete={() => deleteMessage(message.id, message.userId)}
-                />
-              ))}
+              messages.map((message) => {
+                if (message.type === "system") {
+                  return (
+                    <li
+                      key={message.id}
+                      className="text-center text-xs text-white/60 my-2"
+                    >
+                      <span className="text-[10px] text-white/40 mr-2">
+                        {formatTime(message.createdAt)}
+                      </span>
+                      <span>{message.text}</span>
+                    </li>
+                  );
+                }
+
+                if (message.type === "text") {
+                  return (
+                    <MessageBubble
+                      key={message.id}
+                      message={message}
+                      isOwn={message.userId === user.uid}
+                      onDelete={() => deleteMessage(message.id, message.userId)}
+                    />
+                  );
+                }
+
+                return null;
+              })}
           </ul>
         </section>
 

@@ -1,4 +1,5 @@
 import type { ZupMessage } from "../../types/message";
+import { formatTime } from "../../utils/formatTime";
 
 type MessageBubbleProps = {
   message: ZupMessage;
@@ -27,11 +28,20 @@ export default function MessageBubble({
       max-w-[75%]
     `}
       >
-        {!isOwn && (
-          <span className="block text-white text-left ml-1 font-chat">
-            {message.userNickname}
+        <div
+          className={`
+            mb-1
+            px-1
+            flex items-baseline gap-2
+            text-[11px] text-white/60
+            ${isOwn ? "justify-end" : "justify-start"}
+          `}
+        >
+          <span className="font-chat text-xs text-white/80">
+            {!isOwn && message.userNickname}
           </span>
-        )}
+          <span>{formatTime(message.createdAt)}</span>
+        </div>
 
         <div
           className={`
