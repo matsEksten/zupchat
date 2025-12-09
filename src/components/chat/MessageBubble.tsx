@@ -30,15 +30,14 @@ export default function MessageBubble({
       >
         <div
           className={`
-            mb-1
-            px-1
+             mb-1
             flex items-baseline gap-2
             text-[11px] text-white/60
             ${isOwn ? "justify-end" : "justify-start"}
           `}
         >
           <span className="font-chat text-xs text-white/80">
-            {!isOwn && message.userNickname}
+            {isOwn && message.userNickname}
           </span>
           <span>{formatTime(message.createdAt)}</span>
         </div>

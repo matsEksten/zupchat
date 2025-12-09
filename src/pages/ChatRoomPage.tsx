@@ -1,5 +1,5 @@
 import { useParams, Navigate } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Fragment } from "react";
 import { useMessages } from "../hooks/useMessages";
 import { useSendMessage } from "../hooks/useSendMessage";
 import MessageBubble from "../components/chat/MessageBubble";
@@ -8,6 +8,7 @@ import { useDeleteMessage } from "../hooks/useDeleteMessage";
 // import { VerseBackground } from "../components/VerseBackground";
 import { addSystemMessage } from "../services/chatService";
 import { formatTime } from "../utils/formatTime";
+import { formatDate } from "../utils/formatDate";
 
 type RoomId = "heroverse" | "spaceverse" | "exclusiveverse";
 
@@ -83,29 +84,50 @@ export default function ChatRoomPage() {
           )}
           <ul>
             {messages.length > 0 &&
-              messages.map((message) => {
+              messages.map((message, index) => {
+                const currentDate = formatDate(message.createdAt);
+                const prevDate =
+                  index > 0 ? formatDate(messages[index - 1].createdAt) : null;
+                const showDateSeparator =
+                  currentDate && currentDate !== prevDate;
+
                 if (message.type === "system") {
                   return (
-                    <li
-                      key={message.id}
-                      className="text-center text-xs text-white/60 my-2"
-                    >
-                      <span className="text-[10px] text-white/40 mr-2">
-                        {formatTime(message.createdAt)}
-                      </span>
-                      <span>{message.text}</span>
-                    </li>
+                    <Fragment key={message.id}>
+                      {showDateSeparator && (
+                        <li className="my-4 text-center text-[10px] uppercase tracking-wide text-white/50">
+                          {currentDate}
+                        </li>
+                      )}
+
+                      <li className="text-center text-xs text-white/60 my-2">
+                        <span className="text-[10px] text-white/40 mr-2">
+                          {formatTime(message.createdAt)}
+                        </span>
+                        <span>{message.text}</span>
+                      </li>
+                    </Fragment>
                   );
                 }
 
                 if (message.type === "text") {
                   return (
-                    <MessageBubble
-                      key={message.id}
-                      message={message}
-                      isOwn={message.userId === user.uid}
-                      onDelete={() => deleteMessage(message.id, message.userId)}
-                    />
+                    <Fragment key={message.id}>
+                      {showDateSeparator && (
+                        <li className="my-4 flex items-center gap-3 text-[11px] text-white/60">
+                          <span className="flex-1 h-px bg-white/20" />
+                          <span className="px-2">{currentDate}</span>
+                          <span className="flex-1 h-px bg-white/20" />
+                        </li>
+                      )}
+                      <MessageBubble
+                        message={message}
+                        isOwn={message.userId === user.uid}
+                        onDelete={() =>
+                          deleteMessage(message.id, message.userId)
+                        }
+                      />
+                    </Fragment>
                   );
                 }
 
