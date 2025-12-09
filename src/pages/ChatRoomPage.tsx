@@ -9,6 +9,7 @@ import { useDeleteMessage } from "../hooks/useDeleteMessage";
 import { addSystemMessage } from "../services/chatService";
 import { formatTime } from "../utils/formatTime";
 import { formatDate } from "../utils/formatDate";
+import { uploadChatImage } from "../services/photoUploadService";
 
 type RoomId = "heroverse" | "spaceverse" | "exclusiveverse";
 
@@ -31,6 +32,7 @@ export default function ChatRoomPage() {
   const { sendMessage, isPending, error: sendError } = useSendMessage(roomId);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const { user } = useAuthContext();
 
@@ -62,6 +64,41 @@ export default function ChatRoomPage() {
   if (!user.displayName) {
     return <Navigate to="/profile" replace />;
   }
+
+  const handleImageButtonClick = () => {
+    if (!fileInputRef.current) return;
+    fileInputRef.current.click();
+  };
+
+  const handleImageSelected = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!roomId || !user) return;
+
+    if (!file.type.startsWith("image/")) {
+      console.error("Selected file must be an image");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      console.error("Image file is larger than 5 MB");
+      e.target.value = "";
+      return;
+    }
+
+    try {
+      const imageUrl = await uploadChatImage(roomId, user.uid, file);
+      console.log("Uploaded chat image URL:", imageUrl);
+    } catch (err) {
+      console.error("Failed to upload chat image:", err);
+    } finally {
+      e.target.value = "";
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,6 +176,7 @@ export default function ChatRoomPage() {
         <form onSubmit={handleSubmit} className="flex items-center">
           <button
             type="button"
+            onClick={handleImageButtonClick}
             className="flex items-center justify-center bg-amber-400 h-9 w-9 rounded-full pb-1 text-3xl cursor-pointer hover:bg-amber-300 transition"
           >
             +
@@ -158,6 +196,13 @@ export default function ChatRoomPage() {
           >
             ➤
           </button>
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleImageSelected}
+            className="hidden"
+          />
         </form>
 
         {sendError && <p className="text-red-400 text-xs mt-1">{sendError}</p>}

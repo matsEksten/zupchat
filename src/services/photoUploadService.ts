@@ -5,9 +5,11 @@ export const uploadProfilePhoto = async (
   uid: string,
   file: File
 ): Promise<string> => {
+  const safeName = file.name.replaceAll(" ", "-");
+
   const storageRef = ref(
     storage,
-    `thumbnails/${uid}/${Date.now()}-${file.name}`
+    `thumbnails/${uid}/${Date.now()}-${safeName}`
   );
 
   await uploadBytes(storageRef, file);
@@ -15,4 +17,20 @@ export const uploadProfilePhoto = async (
   const url = await getDownloadURL(storageRef);
 
   return url;
+};
+
+export const uploadChatImage = async (
+  roomId: string,
+  userId: string,
+  file: File
+): Promise<string> => {
+  const safeName = file.name.replaceAll(" ", "-");
+
+  const storageRef = ref(
+    storage,
+    `chat-images/${roomId}/${userId}/${Date.now()}-${safeName}`
+  );
+
+  await uploadBytes(storageRef, file);
+  return await getDownloadURL(storageRef);
 };

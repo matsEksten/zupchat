@@ -13,6 +13,7 @@ export default function MessageBubble({
   onDelete,
 }: MessageBubbleProps) {
   const avatarUrl = message.userPhotoURL ?? "/images/avatar.png";
+
   return (
     <li
       className={`
@@ -56,7 +57,15 @@ export default function MessageBubble({
         break-all
       `}
         >
-          {message.text}
+          {message.imageUrl && (
+            <img
+              src={message.imageUrl!}
+              alt="Image message"
+              className="mb-2 max-h-64 rounded-xl object-cover"
+            />
+          )}
+
+          {message.text && <p>{message.text}</p>}
 
           {isOwn && (
             <span
