@@ -9,11 +9,13 @@ export const useSendMessage = (roomId: string | undefined) => {
 
   const { user } = useAuthContext();
 
-  const sendMessage = async (text: string) => {
+  const sendMessage = async (
+    text: string | undefined,
+    imageUrl?: string | null
+  ) => {
     setError(null);
 
     if (!roomId) return;
-
     if (!user) return;
 
     if (!user.displayName) {
@@ -23,20 +25,18 @@ export const useSendMessage = (roomId: string | undefined) => {
       return;
     }
 
-    const trimmedText = text.trim();
-    if (!trimmedText) return;
+    const trimmedText = text?.trim();
+    if (!trimmedText && !imageUrl) return;
 
     setIsPending(true);
 
     try {
       const messagesRef = collection(db, "rooms", roomId, "messages");
 
-      console.log("sendMessage: writing to", `rooms/${roomId}/messages`);
-
       await addDoc(messagesRef, {
-        text: trimmedText,
-        type: "text",
-        imageUrl: null,
+        text: trimmedText || null,
+        type: imageUrl ? "image" : "text",
+        imageUrl: imageUrl ?? null,
         userId: user.uid,
         userNickname: user.displayName,
         userPhotoURL: user.photoURL ?? null,

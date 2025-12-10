@@ -21,6 +21,10 @@ const ROOM_CONFIG = {
 
 export default function ChatRoomPage() {
   const [textMsg, setTextMsg] = useState("");
+  const [pendingImg, setPendingImg] = useState<{
+    file: File;
+    previewUrl: string;
+  } | null>(null);
 
   const { roomId } = useParams<{ roomId?: string }>();
 
@@ -90,22 +94,45 @@ export default function ChatRoomPage() {
       return;
     }
 
-    try {
-      const imageUrl = await uploadChatImage(roomId, user.uid, file);
-      console.log("Uploaded chat image URL:", imageUrl);
-    } catch (err) {
-      console.error("Failed to upload chat image:", err);
-    } finally {
-      e.target.value = "";
-    }
+    const previewUrl = URL.createObjectURL(file);
+
+    setPendingImg({ file, previewUrl });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const trimmed = textMsg.trim();
-    if (!trimmed) return;
-    await sendMessage(trimmed);
-    setTextMsg("");
+
+    if (!pendingImg && !trimmed) return;
+
+    if (!roomId || !user) return;
+
+    if (pendingImg) {
+      try {
+        const imageUrl = await uploadChatImage(
+          roomId,
+          user.uid,
+          pendingImg.file
+        );
+
+        await sendMessage(trimmed || undefined, imageUrl);
+
+        URL.revokeObjectURL(pendingImg.previewUrl);
+        setPendingImg(null);
+        setTextMsg("");
+      } catch (err) {
+        console.error("Failed to send image message:", err);
+        // TODO: user feedback
+      }
+
+      return;
+    }
+
+    if (trimmed) {
+      await sendMessage(trimmed);
+      setTextMsg("");
+    }
   };
 
   return (
@@ -147,7 +174,7 @@ export default function ChatRoomPage() {
                   );
                 }
 
-                if (message.type === "text") {
+                if (message.type === "text" || message.type === "image") {
                   return (
                     <Fragment key={message.id}>
                       {showDateSeparator && (
@@ -174,13 +201,15 @@ export default function ChatRoomPage() {
         </section>
 
         <form onSubmit={handleSubmit} className="flex items-center">
-          <button
-            type="button"
-            onClick={handleImageButtonClick}
-            className="flex items-center justify-center bg-amber-400 h-9 w-9 rounded-full pb-1 text-3xl cursor-pointer hover:bg-amber-300 transition"
-          >
-            +
-          </button>
+          {!pendingImg && (
+            <button
+              type="button"
+              onClick={handleImageButtonClick}
+              className="flex items-center justify-center bg-amber-400 h-9 w-9 rounded-full pb-1 text-3xl cursor-pointer hover:bg-amber-300 transition"
+            >
+              +
+            </button>
+          )}
 
           <input
             type="text"
@@ -204,6 +233,29 @@ export default function ChatRoomPage() {
             className="hidden"
           />
         </form>
+
+        {pendingImg && (
+          <div className="fixed inset-x-0 top-16 bottom-16 bg-black/80 z-30 flex flex-col">
+            <button
+              type="button"
+              onClick={() => {
+                URL.revokeObjectURL(pendingImg.previewUrl);
+                setPendingImg(null);
+              }}
+              className="p-4 text-white text-2xl text-left"
+            >
+              ✕
+            </button>
+
+            <div className="flex-1 flex items-center justify-center px-4">
+              <img
+                src={pendingImg.previewUrl}
+                alt="Image preview"
+                className="max-h-[70vh] max-w-full rounded-xl object-contain"
+              />
+            </div>
+          </div>
+        )}
 
         {sendError && <p className="text-red-400 text-xs mt-1">{sendError}</p>}
       </div>
