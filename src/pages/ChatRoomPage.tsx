@@ -1,4 +1,4 @@
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, useLocation } from "react-router-dom";
 import { useState, useRef, useEffect, Fragment } from "react";
 import { useMessages } from "../hooks/useMessages";
 import { useSendMessage } from "../hooks/useSendMessage";
@@ -27,6 +27,12 @@ export default function ChatRoomPage() {
   } | null>(null);
 
   const { roomId } = useParams<{ roomId?: string }>();
+
+  const location = useLocation() as {
+    state?: {
+      exclusiveAccess?: boolean;
+    };
+  };
 
   const roomConfig = roomId ? ROOM_CONFIG[roomId as RoomId] : undefined;
 
@@ -67,6 +73,14 @@ export default function ChatRoomPage() {
 
   if (!user.displayName) {
     return <Navigate to="/profile" replace />;
+  }
+
+  if (roomId === "exclusiveverse") {
+    const hasExclusiveAccess = location.state?.exclusiveAccess === true;
+
+    if (!hasExclusiveAccess) {
+      return <Navigate to="/lobby" replace />;
+    }
   }
 
   const handleImageButtonClick = () => {
@@ -188,7 +202,11 @@ export default function ChatRoomPage() {
                         message={message}
                         isOwn={message.userId === user.uid}
                         onDelete={() =>
-                          deleteMessage(message.id, message.userId)
+                          deleteMessage(
+                            message.id,
+                            message.userId,
+                            message.imageUrl
+                          )
                         }
                       />
                     </Fragment>

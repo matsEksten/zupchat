@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { upsertUserProfile, getUserProfile } from "../services/userService";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { Spinner } from "../components/Spinner";
-import { uploadProfilePhoto } from "../services/photoUploadService";
+import {
+  uploadProfilePhoto,
+  deleteImageByUrl,
+} from "../services/photoUploadService";
 import { useDeleteAccount } from "../hooks/useDeleteAccount";
-import { storage } from "../firebase/config";
-import { ref, deleteObject } from "firebase/storage";
 import { updateProfile } from "firebase/auth";
 
 type ProfileMode = "loading" | "error" | "onboarding" | "update";
@@ -68,6 +69,8 @@ export const ProfilePage = () => {
       return;
     }
 
+    const previousPhotoUrl = photoUrl;
+
     try {
       setIsSaving(true);
 
@@ -75,7 +78,6 @@ export const ProfilePage = () => {
 
       if (photoFile) {
         uploadedUrl = await uploadProfilePhoto(user.uid, photoFile);
-        setPhotoUrl(uploadedUrl);
       }
 
       await upsertUserProfile(user.uid, {
@@ -94,6 +96,12 @@ export const ProfilePage = () => {
       }
 
       await updateProfile(user, updateData);
+
+      setPhotoUrl(uploadedUrl);
+
+      if (photoFile && previousPhotoUrl && previousPhotoUrl !== uploadedUrl) {
+        await deleteImageByUrl(previousPhotoUrl);
+      }
 
       navigate("/lobby");
     } catch (err: unknown) {
@@ -157,8 +165,7 @@ export const ProfilePage = () => {
 
     if (photoUrl && user) {
       try {
-        const photoRef = ref(storage, photoUrl);
-        await deleteObject(photoRef);
+        await deleteImageByUrl(photoUrl);
 
         await upsertUserProfile(user.uid, {
           photoURL: null,

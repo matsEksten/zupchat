@@ -1,5 +1,10 @@
 import { storage } from "../firebase/config";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 
 export const uploadProfilePhoto = async (
   uid: string,
@@ -33,4 +38,15 @@ export const uploadChatImage = async (
 
   await uploadBytes(storageRef, file);
   return await getDownloadURL(storageRef);
+};
+
+export const deleteImageByUrl = async (url?: string | null) => {
+  if (!url) return;
+
+  try {
+    const storageRef = ref(storage, url);
+    await deleteObject(storageRef);
+  } catch (err) {
+    console.error("Failed to delete image from storage:", err);
+  }
 };

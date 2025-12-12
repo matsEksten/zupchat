@@ -21,7 +21,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex pt-16 items-center justify-center px-4">
+    <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center text-center px-4">
       <div className="w-full max-w-md rounded-2xl bg-black/40 border border-white/15 backdrop-blur-xs px-6 py-8 shadow-xl">
         <h1 className="text-3xl font-semibold tracking-tight text-white mb-2">
           Welcome back

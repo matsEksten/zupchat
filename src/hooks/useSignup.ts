@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/config";
 import { useAuthContext } from "./useAuthContext";
+import { getAccessibleAuthError } from "../utils/accessibleErrorMsg";
 
 export const useSignup = () => {
   const [error, setError] = useState<string | null>(null);
@@ -17,11 +18,8 @@ export const useSignup = () => {
       dispatch({ type: "LOGIN", payload: res.user });
       return res.user;
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Unknown error");
-      }
+      const userFriendlyErr = getAccessibleAuthError(err);
+      setError(userFriendlyErr);
     } finally {
       setIsPending(false);
     }

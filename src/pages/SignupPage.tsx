@@ -21,7 +21,14 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex pt-16 items-center justify-center px-4">
+    <div className="min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center text-center px-4">
+      <p className="mb-4 h-8 w-full max-w-md">
+        {error && (
+          <span className="inline-block w-full rounded-xl bg-red-500/70 text-white px-4 py-2">
+            {error}
+          </span>
+        )}
+      </p>
       <div className="w-full max-w-md rounded-2xl bg-black/40 border border-white/15 backdrop-blur-xs px-6 py-8 shadow-xl">
         <h1 className="text-3xl font-semibold tracking-tight text-white mb-2">
           Create your account
@@ -50,12 +57,6 @@ export default function SignupPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
-
-          {error && (
-            <p className="text-sm text-white bg-red-500/60 rounded-lg px-3 py-2">
-              {error}
-            </p>
-          )}
 
           <button
             type="submit"

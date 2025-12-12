@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { deleteUser } from "firebase/auth";
-import { db, storage } from "../firebase/config";
+import { db } from "../firebase/config";
+import { deleteImageByUrl } from "../services/photoUploadService";
 import { doc, deleteDoc } from "firebase/firestore";
 import { getUserProfile } from "../services/userService";
 import { useAuthContext } from "./useAuthContext";
-import { ref, deleteObject } from "firebase/storage";
-import { FirebaseError } from "firebase/app";
+import { getAccessibleAuthError } from "../utils/accessibleErrorMsg";
 
 export const useDeleteAccount = () => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -21,26 +21,29 @@ export const useDeleteAccount = () => {
       return false;
     }
 
+    const uid = user.uid;
+
+    let profilePhotoUrl: string | null = null;
+    try {
+      const profile = await getUserProfile(uid);
+      profilePhotoUrl = profile?.photoURL ?? null;
+    } catch (err) {
+      console.error("Could not read profile before delete:", err);
+    }
+
     try {
       await deleteUser(user);
 
-      try {
-        const profile = await getUserProfile(user.uid);
-
-        if (profile?.photoURL) {
-          try {
-            const photoRef = ref(storage, profile.photoURL);
-            await deleteObject(photoRef);
-          } catch (err) {
-            console.error("Could not delete profile photo", err);
-          }
+      if (profilePhotoUrl) {
+        try {
+          await deleteImageByUrl(profilePhotoUrl);
+        } catch (err) {
+          console.error("Could not delete profile photo", err);
         }
-      } catch (err) {
-        console.error("Could not read profile during cleanup", err);
       }
 
       try {
-        await deleteDoc(doc(db, "users", user.uid));
+        await deleteDoc(doc(db, "users", uid));
       } catch (err) {
         console.error("Could not delete user document", err);
       }
@@ -49,18 +52,8 @@ export const useDeleteAccount = () => {
 
       return true;
     } catch (err: unknown) {
-      if (
-        err instanceof FirebaseError &&
-        err?.code === "auth/requires-recent-login"
-      ) {
-        setError(
-          "For security reasons you need to log out and log in again before deleting your account."
-        );
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Unknown error");
-      }
+      const userFriendlyErr = getAccessibleAuthError(err);
+      setError(userFriendlyErr);
 
       return false;
     } finally {

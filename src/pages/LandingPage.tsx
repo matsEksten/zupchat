@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col items-center text-center pt-16">
+    <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center text-center px-4">
       <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-3">
         Welcome to ZupChat
       </h1>
