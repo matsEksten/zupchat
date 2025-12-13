@@ -5,11 +5,13 @@ import { useSendMessage } from "../hooks/useSendMessage";
 import MessageBubble from "../components/chat/MessageBubble";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useDeleteMessage } from "../hooks/useDeleteMessage";
-// import { VerseBackground } from "../components/VerseBackground";
 import { addSystemMessage } from "../services/chatService";
 import { formatTime } from "../utils/formatTime";
 import { formatDate } from "../utils/formatDate";
 import { uploadChatImage } from "../services/photoUploadService";
+import { HeroVerseBackground } from "../components/backgrounds/HeroVerseBackground";
+import { SpaceVerseBackground } from "../components/backgrounds/SpaceVerseBackground";
+import { ExclusiveVerseBackground } from "../components/backgrounds/ExclusiveVerseBackground";
 
 type RoomId = "heroverse" | "spaceverse" | "exclusiveverse";
 
@@ -47,9 +49,7 @@ export default function ChatRoomPage() {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    if (!bottomRef.current) return;
-
-    bottomRef.current.scrollIntoView();
+    bottomRef.current?.scrollIntoView({ block: "end" });
   }, [messages.length]);
 
   useEffect(() => {
@@ -150,12 +150,17 @@ export default function ChatRoomPage() {
   };
 
   return (
-    <div className="relative min-h-screen">
-      {/* roomId === "heroverse" && <VerseBackground verse="heroverse" /> */}
-      <div className="relative z-10 min-h-[calc(100vh-4rem)] px-4 py-6 flex flex-col">
+    <div className="relative h-full overflow-hidden">
+      {roomId === "heroverse" && <HeroVerseBackground />}
+      {roomId === "spaceverse" && <SpaceVerseBackground />}
+      {roomId === "exclusiveverse" && <ExclusiveVerseBackground />}
+      <div className="relative z-10 h-[calc(100vh-8rem)] px-4 pt-6 flex flex-col overflow-hidden">
         <h1 className="text-2xl font-bold text-white">{roomConfig.label}</h1>
 
-        <section className="flex-1 overflow-y-auto mb-2">
+        <section
+          className="flex-1 overflow-y-auto mb-2 pb-4 [scrollbar-width:none] [-ms-overflow-style:none]
+          [&::-webkit-scrollbar]:hidden"
+        >
           {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
           {deleteError && (
             <p className="text-red-400 text-xs mt-1">{deleteError}</p>
@@ -216,6 +221,7 @@ export default function ChatRoomPage() {
                 return null;
               })}
           </ul>
+          <div ref={bottomRef} />
         </section>
 
         <form onSubmit={handleSubmit} className="flex items-center">
@@ -277,7 +283,6 @@ export default function ChatRoomPage() {
 
         {sendError && <p className="text-red-400 text-xs mt-1">{sendError}</p>}
       </div>
-      <div ref={bottomRef} />
     </div>
   );
 }

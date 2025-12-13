@@ -5,12 +5,18 @@
 }
 
 html,
-body {
+body,
+#root {
   margin: 0;
   padding: 0;
   background-color: black;
   color: white;
-  min-height: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden; /* <-- stoppar sid-scroll överallt */
 }
 
 @keyframes hero-zoom {
@@ -18,6 +24,10 @@ body {
     transform: scale(1);
   }
   to {
-    transform: scale(1.3);
+    transform: scale(1.08);
   }
+}
+.hero-zoom {
+  animation: hero-zoom 30s ease-in-out infinite alternate;
+  transform-origin: center;
 }

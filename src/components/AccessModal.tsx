@@ -17,7 +17,7 @@ export const AccessModal: React.FC<AccessModalProps> = ({
 }) => {
   return (
     <div
-      className="fixed inset-0 z-30 bg-black/20 backdrop-blur-xs flex items-center justify-center px-4"
+      className="fixed inset-0 z-30 bg-black/60 backdrop-blur-xs flex items-center justify-center px-4"
       role="dialog"
       aria-modal="true"
       onClick={onClose}

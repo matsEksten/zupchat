@@ -17,21 +17,26 @@ function App() {
     location.pathname === "/login" ||
     location.pathname === "/signup";
   const { user } = useAuthContext();
+
   return (
     <div
       className={
         isPublicAuth
-          ? "min-h-screen flex flex-col relative bg-cover bg-position-[74%_center] md:bg-center bg-no-repeat bg-[url('/backgrounds/landingpage/bg-landing.webp')]"
+          ? "min-h-screen flex flex-col relative bg-cover bg-no-repeat bg-[url('/backgrounds/landingpage/landing-mobile.webp')] lg:bg-[url('/backgrounds/landingpage/landing-desktop.webp')] md:bg-center"
           : "min-h-screen flex flex-col"
       }
     >
       {isPublicAuth && (
-        <div className="pointer-events-none absolute inset-0 bg-black/15" />
+        <div className="pointer-events-none absolute inset-0 bg-black/40 lg:bg-black/25" />
       )}
 
-      <div className={isPublicAuth ? "relative z-10" : ""}>
+      <div
+        className={`h-dvh flex flex-col overflow-hidden ${
+          isPublicAuth ? "relative z-10" : ""
+        }`}
+      >
         <Navbar />
-        <main>
+        <main className="flex-1 overflow-hidden">
           <Routes>
             <Route
               path="/"

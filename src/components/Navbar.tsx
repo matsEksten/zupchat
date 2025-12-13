@@ -16,6 +16,17 @@ export default function Navbar() {
 
   const isChatRoute = path.startsWith("/rooms/");
 
+  const roomId = isChatRoute ? path.split("/")[2] : null;
+
+  const roomLogoSrc =
+    roomId === "exclusiveverse"
+      ? "/images/exclusiveverse-logo.jpg"
+      : roomId === "heroverse"
+      ? "/images/heroverse-logo.jpg"
+      : roomId === "spaceverse"
+      ? "/images/spaceverse-logo.jpg"
+      : "/images/ZupChatTextLogoWhite.png";
+
   const menuOptions = () => {
     if (path === "/login") return <Link to="/signup">Sign up</Link>;
     if (path === "/signup") return <Link to="/login">Log in</Link>;
@@ -36,19 +47,19 @@ export default function Navbar() {
     <header
       className={`
         sticky top-0 z-20
-        ${
-          isChatRoute
-            ? "bg-black/70 border-dashed border-b-4 border-yellow-400"
-            : ""
-        }
+        ${isChatRoute ? "bg-black" : ""}
       `}
     >
-      <nav className="h-16 flex items-center justify-between px-2">
+      <nav
+        className={`${
+          isChatRoute ? "h-22" : "h-16"
+        } flex items-center justify-between px-2`}
+      >
         {isChatRoute ? (
           <div>
             <img
-              src="/images/ZupChatTextLogoWhite.png"
-              className="h-12"
+              src={roomLogoSrc}
+              className={isChatRoute ? "h-16" : "h-12"}
               alt="ZupChat logo"
             />
           </div>
