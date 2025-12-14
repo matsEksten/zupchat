@@ -154,7 +154,7 @@ export default function ChatRoomPage() {
       {roomId === "heroverse" && <HeroVerseBackground />}
       {roomId === "spaceverse" && <SpaceVerseBackground />}
       {roomId === "exclusiveverse" && <ExclusiveVerseBackground />}
-      <div className="relative z-10 h-[calc(100vh-8rem)] px-4 pt-6 flex flex-col overflow-hidden">
+      <div className="relative z-10 h-full px-4 pt-6 pb-4 md:pb-6 flex flex-col overflow-hidden">
         <h1 className="text-2xl font-bold text-white">{roomConfig.label}</h1>
 
         <section
