@@ -27,7 +27,7 @@ export function HeroVerseBackground() {
   const src = HERO_BG[heroTime];
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="fixed inset-0 overflow-hidden">
       <img
         src={src}
         alt=""

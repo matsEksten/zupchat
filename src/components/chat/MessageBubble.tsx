@@ -4,15 +4,21 @@ import { formatTime } from "../../utils/formatTime";
 type MessageBubbleProps = {
   message: ZupMessage;
   isOwn: boolean;
+  themeColor: string;
   onDelete?: () => void;
 };
 
 export default function MessageBubble({
   message,
   isOwn,
+  themeColor,
+
   onDelete,
 }: MessageBubbleProps) {
   const avatarUrl = message.userPhotoURL ?? "/images/avatar.png";
+
+  const bgClass = themeColor.split(" ")[0];
+  const tailClass = bgClass.replace("bg-", "border-t-");
 
   return (
     <li
@@ -31,7 +37,7 @@ export default function MessageBubble({
       >
         <div
           className={`
-             mb-1
+            mb-1
             flex items-baseline gap-2
             text-[11px] text-white/60
             ${isOwn ? "justify-end" : "justify-start"}
@@ -45,17 +51,18 @@ export default function MessageBubble({
 
         <div
           className={`
-        relative
-        inline-block
-        ${isOwn ? "pt-6 pb-2 px-4" : "py-2 px-4"}
-        rounded-2xl
-        text-lg
-        shadow-sm
-        ${isOwn ? "bg-amber-400 text-black" : "bg-white text-black"}
-        z-10
-        font-chat
-        break-all
-      `}
+          relative
+          inline-block
+          ${isOwn ? "pt-6 pb-2 px-4" : "py-2 px-4"}
+          rounded-2xl
+          text-lg
+          shadow-sm
+          ${isOwn ? `${themeColor} text-black` : "bg-white text-black"}
+          opacity-80
+          z-10
+          font-chat
+          break-all
+          `}
         >
           {message.imageUrl && (
             <img
@@ -68,22 +75,23 @@ export default function MessageBubble({
           {message.text && <p>{message.text}</p>}
 
           {isOwn && (
-            <span
-              className="absolute -top-2.5 right-0 p-2 text-red-500 font-bold text-2xl cursor-pointer"
+            <button
               onClick={onDelete}
+              className="absolute top-1.5 right-1.5 h-5 w-5 rounded-full bg-black/60 text-white/70 flex items-center justify-center hover:bg-black/75 hover:text-white/90 transition"
             >
               ✕
-            </span>
+            </button>
           )}
 
           <span
             className={`
               absolute
               -bottom-2
+              translate-y-[0.5px]
               ${isOwn ? "right-2 rotate-[-8deg]" : "left-2 rotate-[8deg]"}
               w-0 h-0
               border-t-10
-              ${isOwn ? "border-t-yellow-400" : "border-t-white"}
+              ${isOwn ? tailClass : "border-t-white"}
               border-x-8
               border-x-transparent
               z-[-1]
@@ -94,7 +102,7 @@ export default function MessageBubble({
         <img
           src={avatarUrl}
           alt={isOwn ? "You" : message.userNickname}
-          className="mt-3 h-8 w-8 rounded-full object-cover"
+          className="mt-3 h-9 w-9 rounded-full object-cover"
         />
       </div>
     </li>

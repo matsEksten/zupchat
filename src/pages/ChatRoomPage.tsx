@@ -12,6 +12,7 @@ import { uploadChatImage } from "../services/photoUploadService";
 import { HeroVerseBackground } from "../components/backgrounds/HeroVerseBackground";
 import { SpaceVerseBackground } from "../components/backgrounds/SpaceVerseBackground";
 import { ExclusiveVerseBackground } from "../components/backgrounds/ExclusiveVerseBackground";
+import { Plus, Send } from "lucide-react";
 
 type RoomId = "heroverse" | "spaceverse" | "exclusiveverse";
 
@@ -29,6 +30,20 @@ export default function ChatRoomPage() {
   } | null>(null);
 
   const { roomId } = useParams<{ roomId?: string }>();
+
+  const theme =
+    roomId === "heroverse"
+      ? "hero"
+      : roomId === "spaceverse"
+      ? "space"
+      : "exclusive";
+
+  const themeColor =
+    theme === "hero"
+      ? "bg-[rgb(253,190,87)] hover:bg-[rgb(255,205,110)]"
+      : theme === "space"
+      ? "bg-[rgb(131,254,254)] hover:bg-[rgb(170,255,255)]"
+      : "bg-[rgb(254,196,230)] hover:bg-[rgb(255,210,238)]";
 
   const location = useLocation() as {
     state?: {
@@ -154,9 +169,7 @@ export default function ChatRoomPage() {
       {roomId === "heroverse" && <HeroVerseBackground />}
       {roomId === "spaceverse" && <SpaceVerseBackground />}
       {roomId === "exclusiveverse" && <ExclusiveVerseBackground />}
-      <div className="relative z-10 h-full px-4 pt-6 pb-4 md:pb-6 flex flex-col overflow-hidden">
-        <h1 className="text-2xl font-bold text-white">{roomConfig.label}</h1>
-
+      <div className="relative z-10 h-full px-4 pb-4 md:pb-6 flex flex-col overflow-hidden">
         <section
           className="flex-1 overflow-y-auto mb-2 pb-4 [scrollbar-width:none] [-ms-overflow-style:none]
           [&::-webkit-scrollbar]:hidden"
@@ -206,6 +219,7 @@ export default function ChatRoomPage() {
                       <MessageBubble
                         message={message}
                         isOwn={message.userId === user.uid}
+                        themeColor={themeColor}
                         onDelete={() =>
                           deleteMessage(
                             message.id,
@@ -229,9 +243,9 @@ export default function ChatRoomPage() {
             <button
               type="button"
               onClick={handleImageButtonClick}
-              className="flex items-center justify-center bg-amber-400 h-9 w-9 rounded-full pb-1 text-3xl cursor-pointer hover:bg-amber-300 transition"
+              className="flex items-center justify-center h-10 w-10 rounded-full bg-black/40 border border-white/15 backdrop-blur-sm text-white/90 text-2xl hover:bg-black/20 hover:font-bold  hover:border-white/25"
             >
-              +
+              <Plus className="h-6 w-6" />
             </button>
           )}
 
@@ -239,15 +253,15 @@ export default function ChatRoomPage() {
             type="text"
             value={textMsg}
             onChange={(e) => setTextMsg(e.target.value)}
-            className="flex-1 bg-white text-black mx-2 h-9 rounded-2xl px-3 focus:outline-none opacity-80 font-chat"
+            className="flex-1 bg-white text-black mx-2 h-9 rounded-2xl px-3 focus:outline-none opacity-60 font-chat"
           />
 
           <button
             type="submit"
             disabled={isPending}
-            className="flex items-center justify-center h-9 w-9 bg-amber-400 disabled:opacity-50 rounded-full cursor-pointer hover:bg-amber-300 transition"
+            className={`h-10 w-10 rounded-full text-black transition disabled:opacity-60 ${themeColor}`}
           >
-            ➤
+            <Send className="mx-auto h-6 w-6" />
           </button>
           <input
             type="file"
