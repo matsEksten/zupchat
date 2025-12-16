@@ -40,10 +40,17 @@ export default function ChatRoomPage() {
 
   const themeColor =
     theme === "hero"
-      ? "bg-[rgb(253,190,87)] hover:bg-[rgb(255,205,110)]"
+      ? "bg-[rgb(253,190,87)]"
       : theme === "space"
-      ? "bg-[rgb(131,254,254)] hover:bg-[rgb(170,255,255)]"
-      : "bg-[rgb(254,196,230)] hover:bg-[rgb(255,210,238)]";
+      ? "bg-[rgb(131,254,254)]"
+      : "bg-[rgb(254,196,230)]";
+
+  const themeRgb =
+    theme === "hero"
+      ? "253,190,87"
+      : theme === "space"
+      ? "131,254,254"
+      : "254,196,230";
 
   const location = useLocation() as {
     state?: {
@@ -220,6 +227,7 @@ export default function ChatRoomPage() {
                         message={message}
                         isOwn={message.userId === user.uid}
                         themeColor={themeColor}
+                        themeRgb={themeRgb}
                         onDelete={() =>
                           deleteMessage(
                             message.id,
@@ -259,7 +267,7 @@ export default function ChatRoomPage() {
           <button
             type="submit"
             disabled={isPending}
-            className={`h-10 w-10 rounded-full text-black transition disabled:opacity-60 ${themeColor}`}
+            className={`h-10 w-10 rounded-full text-black transition disabled:opacity-60 hover:opacity-80 ${themeColor}`}
           >
             <Send className="mx-auto h-6 w-6" />
           </button>

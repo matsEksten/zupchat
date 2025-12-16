@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-chat: "Patrick Hand", system-ui, sans-serif;
+  --font-chat: "Inter", system-ui, sans-serif;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
 }
 
 html,
@@ -29,5 +30,19 @@ body {
 }
 .hero-zoom {
   animation: hero-zoom 30s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+
+@keyframes space-zoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.2);
+  }
+}
+
+.space-zoom {
+  animation: space-zoom 60s ease-in-out infinite alternate;
   transform-origin: center;
 }
