@@ -93,7 +93,7 @@ export default function LobbyPage() {
               <img
                 src={BG.hero}
                 alt=""
-                className="absolute inset-0 h-full w-full object-cover opacity-85 hover:opacity-100 transition"
+                className="absolute inset-0 h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-black/50 pointer-events-none" />
               <img
@@ -109,7 +109,7 @@ export default function LobbyPage() {
               <img
                 src={BG.space}
                 alt=""
-                className="absolute inset-0 h-full w-full object-cover opacity-85 hover:opacity-100 transition"
+                className="absolute inset-0 h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-black/50 pointer-events-none" />
               <img
@@ -122,16 +122,14 @@ export default function LobbyPage() {
             <button
               type="button"
               onClick={() => setShowExclusiveModal(true)}
-              className="relative block w-full h-28 overflow-hidden border border-white/15 verse-hover"
+              className="relative block w-full h-28 overflow-hidden border border-white/15 verse-hover p-0 bg-transparent appearance-none"
             >
               <img
                 src={BG.exclusive}
-                alt="Exclusiveverse background"
-                className="absolute inset-0 h-full w-full object-cover opacity-85 hover:opacity-100 transition"
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover"
               />
-
               <div className="absolute inset-0 bg-black/50 pointer-events-none" />
-
               <img
                 src={LOGOS.exclusive}
                 alt="ExclusiveVerse"

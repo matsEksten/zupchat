@@ -263,7 +263,7 @@ export default function ChatRoomPage() {
                 <button
                   type="button"
                   onClick={handleImageButtonClick}
-                  className="flex items-center justify-center h-10 w-10 rounded-full bg-black/40 border border-white/15 backdrop-blur-sm text-white/90 text-2xl hover:bg-black/20 hover:font-bold  hover:border-white/25"
+                  className="shrink-0 h-10 w-10 rounded-full flex items-center justify-center bg-black/40 border border-white/15 backdrop-blur-sm text-white/90 hover:bg-black/20 hover:border-white/25"
                 >
                   <Plus className="h-6 w-6" />
                 </button>
@@ -273,13 +273,13 @@ export default function ChatRoomPage() {
                 type="text"
                 value={textMsg}
                 onChange={(e) => setTextMsg(e.target.value)}
-                className="flex-1 bg-white text-black mx-2 h-9 rounded-2xl px-3 focus:outline-none opacity-60 font-chat"
+                className="min-w-0 mx-2 flex-1 h-9 rounded-2xl bg-white px-3 text-black opacity-60 focus:outline-none font-chat"
               />
 
               <button
                 type="submit"
                 disabled={isPending}
-                className={`h-10 w-10 rounded-full text-black transition disabled:opacity-60 hover:opacity-80 ${themeColor}`}
+                className={`shrink-0 h-10 w-10 rounded-full text-black transition disabled:opacity-60 ${themeColor}`}
               >
                 <Send className="mx-auto h-6 w-6" />
               </button>
