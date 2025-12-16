@@ -57,3 +57,18 @@ body {
     filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.35));
   }
 }
+
+@keyframes lobby-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.lobby-title {
+  animation: lobby-in 0.8s ease-out both;
+}

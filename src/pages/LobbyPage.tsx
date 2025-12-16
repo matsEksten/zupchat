@@ -82,8 +82,8 @@ export default function LobbyPage() {
     <div className="min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center px-4">
       {profile && (
         <>
-          <h1 className="text-2xl font-bold">
-            Welcome to the Lobby {profile.displayName}
+          <h1 className="lobby-title text-3xl md:text-4xl text-white/70">
+            Choose your verse
           </h1>
           <div className="mt-6 flex w-full max-w-3xl flex-col gap-5 px-4">
             <Link
