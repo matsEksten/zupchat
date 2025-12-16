@@ -18,6 +18,11 @@ function App() {
     location.pathname === "/signup";
   const { user } = useAuthContext();
 
+  const isConstrainedPage =
+    location.pathname.startsWith("/rooms/") ||
+    location.pathname === "/lobby" ||
+    location.pathname === "/profile";
+
   return (
     <div
       className={
@@ -36,33 +41,42 @@ function App() {
         }`}
       >
         <Navbar />
-        <main className="flex-1 overflow-hidden">
-          <Routes>
-            <Route
-              path="/"
-              element={user ? <Navigate to="/lobby" /> : <LandingPage />}
-            />
-            <Route
-              path="/login"
-              element={user ? <Navigate to="/lobby" /> : <LoginPage />}
-            />
-            <Route
-              path="/signup"
-              element={user ? <Navigate to="/profile" /> : <SignupPage />}
-            />
-            <Route
-              path="/profile"
-              element={!user ? <Navigate to="/" /> : <ProfilePage />}
-            />
-            <Route
-              path="/lobby"
-              element={!user ? <Navigate to="/" /> : <LobbyPage />}
-            />
-            <Route
-              path="/rooms/:roomId"
-              element={!user ? <Navigate to="/" /> : <ChatRoomPage />}
-            />
-          </Routes>
+
+        <main className="flex-1 overflow-hidden flex justify-center">
+          <div
+            className={
+              isConstrainedPage
+                ? "w-full px-4 lg:px-0 lg:w-[70vw] lg:max-w-5xl"
+                : "w-full"
+            }
+          >
+            <Routes>
+              <Route
+                path="/"
+                element={user ? <Navigate to="/lobby" /> : <LandingPage />}
+              />
+              <Route
+                path="/login"
+                element={user ? <Navigate to="/lobby" /> : <LoginPage />}
+              />
+              <Route
+                path="/signup"
+                element={user ? <Navigate to="/profile" /> : <SignupPage />}
+              />
+              <Route
+                path="/profile"
+                element={!user ? <Navigate to="/" /> : <ProfilePage />}
+              />
+              <Route
+                path="/lobby"
+                element={!user ? <Navigate to="/" /> : <LobbyPage />}
+              />
+              <Route
+                path="/rooms/:roomId"
+                element={!user ? <Navigate to="/" /> : <ChatRoomPage />}
+              />
+            </Routes>
+          </div>
         </main>
       </div>
     </div>

@@ -27,15 +27,6 @@ export default function Navbar() {
       ? "/images/spaceverse-logo.png"
       : "/images/ZupChatTextLogoWhite.png";
 
-  const roomGlow =
-    roomId === "heroverse"
-      ? "filter-[drop-shadow(0_0_34px_rgba(255,140,40,0.85))]"
-      : roomId === "spaceverse"
-      ? "filter-[drop-shadow(0_0_34px_rgba(80,255,255,0.85))]"
-      : roomId === "exclusiveverse"
-      ? "filter-[drop-shadow(0_0_34px_rgba(255,80,200,0.85))]"
-      : "";
-
   const navActionClass =
     "inline-flex items-center gap-2 rounded-xl bg-white/8 px-3 py-2 text-white/90 " +
     "hover:bg-white/15 hover:text-white transition";
@@ -91,30 +82,30 @@ export default function Navbar() {
         }
       `}
     >
-      <nav
-        className={`${
-          isChatRoute ? "h-20" : "h-16"
-        } flex items-center justify-between px-2`}
-      >
-        {isChatRoute ? (
-          <div>
+      <nav className={`${isChatRoute ? "h-20" : "h-16"} flex justify-center`}>
+        <div className="w-full px-3 lg:px-6 xl:px-10 flex items-center justify-between h-full">
+          {isChatRoute ? (
             <img
               src={roomLogoSrc}
-              className={`h-16 object-contain ${roomGlow}`}
+              className={
+                roomId === "exclusiveverse"
+                  ? "h-12 object-contain"
+                  : "h-16 object-contain"
+              }
               alt="ZupChat logo"
             />
-          </div>
-        ) : (
-          <Link to="/">
-            <img
-              src="/images/ZupChatTextLogoWhite.png"
-              className="h-12"
-              alt="ZupChat logo"
-            />
-          </Link>
-        )}
+          ) : (
+            <Link to="/">
+              <img
+                src="/images/ZupChatTextLogoWhite.png"
+                className="h-12"
+                alt="ZupChat logo"
+              />
+            </Link>
+          )}
 
-        <div className="pr-2">{menuOptions()}</div>
+          <div className="pr-2">{menuOptions()}</div>
+        </div>
       </nav>
     </header>
   );

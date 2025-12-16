@@ -176,134 +176,150 @@ export default function ChatRoomPage() {
       {roomId === "heroverse" && <HeroVerseBackground />}
       {roomId === "spaceverse" && <SpaceVerseBackground />}
       {roomId === "exclusiveverse" && <ExclusiveVerseBackground />}
-      <div className="relative z-10 h-full px-4 pb-4 md:pb-6 flex flex-col overflow-hidden">
-        <section
-          className="flex-1 overflow-y-auto mb-2 pb-4 [scrollbar-width:none] [-ms-overflow-style:none]
-          [&::-webkit-scrollbar]:hidden"
+
+      <div className="relative z-10 h-full flex justify-center">
+        <div
+          className="
+          w-full
+          lg:w-[70vw] lg:max-w-5xl
+          lg:bg-black/15 lg:backdrop-blur-xs
+          lg:border-x lg:border-white/10
+          "
         >
-          {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
-          {deleteError && (
-            <p className="text-red-400 text-xs mt-1">{deleteError}</p>
-          )}
-          <ul>
-            {messages.length > 0 &&
-              messages.map((message, index) => {
-                const currentDate = formatDate(message.createdAt);
-                const prevDate =
-                  index > 0 ? formatDate(messages[index - 1].createdAt) : null;
-                const showDateSeparator =
-                  currentDate && currentDate !== prevDate;
-
-                if (message.type === "system") {
-                  return (
-                    <Fragment key={message.id}>
-                      {showDateSeparator && (
-                        <li className="my-4 text-center text-[10px] uppercase tracking-wide text-white/50">
-                          {currentDate}
-                        </li>
-                      )}
-
-                      <li className="text-center text-xs text-white/60 my-2">
-                        <span className="text-[10px] text-white/40 mr-2">
-                          {formatTime(message.createdAt)}
-                        </span>
-                        <span>{message.text}</span>
-                      </li>
-                    </Fragment>
-                  );
-                }
-
-                if (message.type === "text" || message.type === "image") {
-                  return (
-                    <Fragment key={message.id}>
-                      {showDateSeparator && (
-                        <li className="my-4 flex items-center gap-3 text-[11px] text-white/60">
-                          <span className="flex-1 h-px bg-white/20" />
-                          <span className="px-2">{currentDate}</span>
-                          <span className="flex-1 h-px bg-white/20" />
-                        </li>
-                      )}
-                      <MessageBubble
-                        message={message}
-                        isOwn={message.userId === user.uid}
-                        themeColor={themeColor}
-                        themeRgb={themeRgb}
-                        onDelete={() =>
-                          deleteMessage(
-                            message.id,
-                            message.userId,
-                            message.imageUrl
-                          )
-                        }
-                      />
-                    </Fragment>
-                  );
-                }
-
-                return null;
-              })}
-          </ul>
-          <div ref={bottomRef} />
-        </section>
-
-        <form onSubmit={handleSubmit} className="flex items-center">
-          {!pendingImg && (
-            <button
-              type="button"
-              onClick={handleImageButtonClick}
-              className="flex items-center justify-center h-10 w-10 rounded-full bg-black/40 border border-white/15 backdrop-blur-sm text-white/90 text-2xl hover:bg-black/20 hover:font-bold  hover:border-white/25"
+          <div className="relative z-10 h-full px-4 pb-4 md:pb-6 flex flex-col overflow-hidden">
+            <section
+              className="flex-1 overflow-y-auto mb-2 pb-4 [scrollbar-width:none] [-ms-overflow-style:none]
+          [&::-webkit-scrollbar]:hidden"
             >
-              <Plus className="h-6 w-6" />
-            </button>
-          )}
+              {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
+              {deleteError && (
+                <p className="text-red-400 text-xs mt-1">{deleteError}</p>
+              )}
+              <ul>
+                {messages.length > 0 &&
+                  messages.map((message, index) => {
+                    const currentDate = formatDate(message.createdAt);
+                    const prevDate =
+                      index > 0
+                        ? formatDate(messages[index - 1].createdAt)
+                        : null;
+                    const showDateSeparator =
+                      currentDate && currentDate !== prevDate;
 
-          <input
-            type="text"
-            value={textMsg}
-            onChange={(e) => setTextMsg(e.target.value)}
-            className="flex-1 bg-white text-black mx-2 h-9 rounded-2xl px-3 focus:outline-none opacity-60 font-chat"
-          />
+                    if (message.type === "system") {
+                      return (
+                        <Fragment key={message.id}>
+                          {showDateSeparator && (
+                            <li className="my-4 text-center text-[10px] uppercase tracking-wide text-white/50">
+                              {currentDate}
+                            </li>
+                          )}
 
-          <button
-            type="submit"
-            disabled={isPending}
-            className={`h-10 w-10 rounded-full text-black transition disabled:opacity-60 hover:opacity-80 ${themeColor}`}
-          >
-            <Send className="mx-auto h-6 w-6" />
-          </button>
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            onChange={handleImageSelected}
-            className="hidden"
-          />
-        </form>
+                          <li className="text-center text-xs text-white/60 my-2">
+                            <span className="text-[10px] text-white/40 mr-2">
+                              {formatTime(message.createdAt)}
+                            </span>
+                            <span>{message.text}</span>
+                          </li>
+                        </Fragment>
+                      );
+                    }
 
-        {pendingImg && (
-          <div className="fixed inset-x-0 top-16 bottom-16 bg-black/80 z-30 flex flex-col">
-            <button
-              type="button"
-              onClick={() => {
-                URL.revokeObjectURL(pendingImg.previewUrl);
-                setPendingImg(null);
-              }}
-              className="p-4 text-white text-2xl text-left"
-            >
-              ✕
-            </button>
+                    if (message.type === "text" || message.type === "image") {
+                      return (
+                        <Fragment key={message.id}>
+                          {showDateSeparator && (
+                            <li className="my-4 flex items-center gap-3 text-[11px] text-white/60">
+                              <span className="flex-1 h-px bg-white/20" />
+                              <span className="px-2">{currentDate}</span>
+                              <span className="flex-1 h-px bg-white/20" />
+                            </li>
+                          )}
+                          <MessageBubble
+                            message={message}
+                            isOwn={message.userId === user.uid}
+                            themeColor={themeColor}
+                            themeRgb={themeRgb}
+                            onDelete={() =>
+                              deleteMessage(
+                                message.id,
+                                message.userId,
+                                message.imageUrl
+                              )
+                            }
+                          />
+                        </Fragment>
+                      );
+                    }
 
-            <div className="flex-1 flex items-center justify-center px-4">
-              <img
-                src={pendingImg.previewUrl}
-                alt="Image preview"
-                className="max-h-[70vh] max-w-full rounded-xl object-contain"
+                    return null;
+                  })}
+              </ul>
+              <div ref={bottomRef} />
+            </section>
+
+            <form onSubmit={handleSubmit} className="flex items-center">
+              {!pendingImg && (
+                <button
+                  type="button"
+                  onClick={handleImageButtonClick}
+                  className="flex items-center justify-center h-10 w-10 rounded-full bg-black/40 border border-white/15 backdrop-blur-sm text-white/90 text-2xl hover:bg-black/20 hover:font-bold  hover:border-white/25"
+                >
+                  <Plus className="h-6 w-6" />
+                </button>
+              )}
+
+              <input
+                type="text"
+                value={textMsg}
+                onChange={(e) => setTextMsg(e.target.value)}
+                className="flex-1 bg-white text-black mx-2 h-9 rounded-2xl px-3 focus:outline-none opacity-60 font-chat"
               />
-            </div>
-          </div>
-        )}
 
-        {sendError && <p className="text-red-400 text-xs mt-1">{sendError}</p>}
+              <button
+                type="submit"
+                disabled={isPending}
+                className={`h-10 w-10 rounded-full text-black transition disabled:opacity-60 hover:opacity-80 ${themeColor}`}
+              >
+                <Send className="mx-auto h-6 w-6" />
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={handleImageSelected}
+                className="hidden"
+              />
+            </form>
+
+            {pendingImg && (
+              <div className="fixed inset-x-0 top-16 bottom-16 bg-black/80 z-30 flex flex-col">
+                <button
+                  type="button"
+                  onClick={() => {
+                    URL.revokeObjectURL(pendingImg.previewUrl);
+                    setPendingImg(null);
+                  }}
+                  className="p-4 text-white text-2xl text-left"
+                >
+                  ✕
+                </button>
+
+                <div className="flex-1 flex items-center justify-center px-4">
+                  <img
+                    src={pendingImg.previewUrl}
+                    alt="Image preview"
+                    className="max-h-[70vh] max-w-full rounded-xl object-contain"
+                  />
+                </div>
+              </div>
+            )}
+
+            {sendError && (
+              <p className="text-red-400 text-xs mt-1">{sendError}</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

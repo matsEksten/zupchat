@@ -185,7 +185,7 @@ export const ProfilePage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center px-4">
       {mode === "loading" && (
         <div>
           <Spinner />

@@ -8,6 +8,18 @@ import { AccessModal } from "../components/AccessModal";
 const EXCLUSIVE_ACCESS_CODE =
   import.meta.env.VITE_EXCLUSIVE_ACCESS_CODE ?? "kanot";
 
+const BG = {
+  hero: "/backgrounds/heroverse/bg-night.webp",
+  space: "/backgrounds/spaceverse/spaceverse-bg-3.webp",
+  exclusive: "/backgrounds/exclusiveverse/exclusive-bg-night.webp",
+};
+
+const LOGOS = {
+  hero: "/images/heroverse-logo.png",
+  space: "/images/spaceverse-logo.png",
+  exclusive: "/images/exclusiveverse-logo.png",
+};
+
 export default function LobbyPage() {
   const [profile, setProfile] = useState<ZupUser | null>(null);
   const [showExclusiveModal, setShowExclusiveModal] = useState(false);
@@ -67,31 +79,64 @@ export default function LobbyPage() {
   };
 
   return (
-    <div className="flex flex-col items-center mt-32">
+    <div className="min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center px-4">
       {profile && (
         <>
           <h1 className="text-2xl font-bold">
             Welcome to the Lobby {profile.displayName}
           </h1>
-          <div className="mt-6 flex flex-col gap-3">
+          <div className="mt-6 flex w-full max-w-3xl flex-col gap-5 px-4">
             <Link
               to="/rooms/heroverse"
-              className="bg-cyan-200 text-black py-2 px-6 rounded-xl"
+              className="relative block w-full h-28 overflow-hidden border border-white/15 verse-hover"
             >
-              HeroVerse
+              <img
+                src={BG.hero}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover opacity-85 hover:opacity-100 transition"
+              />
+              <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+              <img
+                src={LOGOS.hero}
+                alt="HeroVerse"
+                className="absolute left-1/2 top-1/2 w-36 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              />
             </Link>
             <Link
               to="/rooms/spaceverse"
-              className="bg-cyan-200 text-black py-2 px-6 rounded-xl"
+              className="relative block w-full h-28 overflow-hidden border border-white/15 verse-hover"
             >
-              SpaceVerse
+              <img
+                src={BG.space}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover opacity-85 hover:opacity-100 transition"
+              />
+              <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+              <img
+                src={LOGOS.space}
+                alt="HeroVerse"
+                className="absolute left-1/2 top-1/2 w-25 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              />
             </Link>
+
             <button
               type="button"
               onClick={() => setShowExclusiveModal(true)}
-              className="bg-cyan-200 text-black py-2 px-6 rounded-xl"
+              className="relative block w-full h-28 overflow-hidden border border-white/15 verse-hover"
             >
-              ExclusiveVerse
+              <img
+                src={BG.exclusive}
+                alt="Exclusiveverse background"
+                className="absolute inset-0 h-full w-full object-cover opacity-85 hover:opacity-100 transition"
+              />
+
+              <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+
+              <img
+                src={LOGOS.exclusive}
+                alt="ExclusiveVerse"
+                className="absolute left-1/2 top-1/2 w-60 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              />
             </button>
           </div>
         </>

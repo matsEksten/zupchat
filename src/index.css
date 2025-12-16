@@ -46,3 +46,14 @@ body {
   animation: space-zoom 60s ease-in-out infinite alternate;
   transform-origin: center;
 }
+
+@layer components {
+  .verse-hover {
+    transition: transform 300ms, filter 300ms;
+  }
+
+  .verse-hover:hover {
+    transform: scale(1.01);
+    filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.35));
+  }
+}
