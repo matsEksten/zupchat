@@ -61,7 +61,7 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={isPending}
-            className="mt-2 w-full py-3 rounded-xl border border-amber-300/60 bg-amber-400/30 backdrop-blur-xs font-semibold text-sm hover:bg-amber-400/40 disabled:opacity-60 disabled:cursor-not-allowed transition"
+            className="mt-2 w-full py-3 rounded-xl border border-amber-300/60 bg-amber-400/30 backdrop-blur-xs font-semibold text-sm cursor-pointer hover:bg-amber-400/35 disabled:opacity-60 transition"
           >
             {isPending ? "Creating account..." : "Sign up"}
           </button>

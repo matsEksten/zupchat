@@ -28,6 +28,7 @@ export default function ChatRoomPage() {
     file: File;
     previewUrl: string;
   } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { roomId } = useParams<{ roomId?: string }>();
 
@@ -138,11 +139,15 @@ export default function ChatRoomPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (isSubmitting || isPending) return;
+
     const trimmed = textMsg.trim();
 
     if (!pendingImg && !trimmed) return;
 
     if (!roomId || !user) return;
+
+    setIsSubmitting(true);
 
     if (pendingImg) {
       try {
@@ -159,15 +164,20 @@ export default function ChatRoomPage() {
         setTextMsg("");
       } catch (err) {
         console.error("Failed to send image message:", err);
-        // TODO: user feedback
+      } finally {
+        setIsSubmitting(false);
       }
 
       return;
     }
 
-    if (trimmed) {
+    try {
       await sendMessage(trimmed);
       setTextMsg("");
+    } catch (err) {
+      console.error("Failed to send text message:", err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -210,8 +220,12 @@ export default function ChatRoomPage() {
                       return (
                         <Fragment key={message.id}>
                           {showDateSeparator && (
-                            <li className="my-4 text-center text-[10px] uppercase tracking-wide text-white/50">
-                              {currentDate}
+                            <li className="my-4 flex items-center gap-3 text-[11px] uppercase text-white/55">
+                              <span className="flex-1 h-px bg-white/15" />
+                              <span className="px-2 py-0.5 rounded-full bg-black/30 border border-white/10">
+                                {currentDate}
+                              </span>
+                              <span className="flex-1 h-px bg-white/15" />
                             </li>
                           )}
 
@@ -278,7 +292,7 @@ export default function ChatRoomPage() {
 
               <button
                 type="submit"
-                disabled={isPending}
+                disabled={isPending || isSubmitting}
                 className={`shrink-0 h-10 w-10 rounded-full text-black transition disabled:opacity-60 ${themeColor}`}
               >
                 <Send className="mx-auto h-6 w-6" />

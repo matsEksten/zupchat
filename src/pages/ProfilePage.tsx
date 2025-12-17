@@ -185,106 +185,117 @@ export const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center px-4">
-      {mode === "loading" && (
-        <div>
-          <Spinner />
-        </div>
-      )}
-      <h1 className="text-2xl flex flex-col items-center">
-        {mode === "onboarding" && "Set Profile"}
-        {mode === "update" && "Update Profile"}
-      </h1>
-      {mode === "error" && <p className="text-red-500">{error}</p>}
-
-      <div className="mt-6 flex flex-col items-center">
-        <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center">
-          {currentImage ? (
-            <img
-              src={currentImage}
-              alt="Profile photo"
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <img
-              src="/images/avatar.png"
-              alt="Avatar"
-              className="w-full h-full object-cover"
-            />
+    <div className="min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center text-center px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white/5 border border-white/15 backdrop-blur-xs px-6 py-8 shadow-xl">
+        <p className="mb-4 h-8 w-full max-w-md">
+          {(error || thumbnailError || deleteError) && (
+            <span className="inline-block w-full rounded-xl bg-red-500/70 text-white px-4 py-2 text-sm">
+              {error || thumbnailError || deleteError}
+            </span>
           )}
-        </div>
-        {photoUrl && (
-          <button
-            onClick={removePhoto}
-            className="text-white text-sm underline cursor-pointer"
-          >
-            Remove profile photo
-          </button>
+        </p>
+        {mode === "loading" && (
+          <div>
+            <Spinner />
+          </div>
         )}
-        <label className="flex flex-col items-center text-sm cursor-pointer">
-          <span className="my-2 bg-blue-500 py-2 px-4 rounded-lg">
-            {mode === "onboarding"
-              ? "Upload profile picture"
-              : "Change profile picture"}
-          </span>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoChange}
-            className="hidden"
-          />
-        </label>
-        {thumbnailError && (
-          <p className="text-red-500 text-xs">{thumbnailError}</p>
+        <h1 className="text-3xl font-semibold mb-2">
+          {mode === "onboarding" && "Set Profile"}
+          {mode === "update" && "Update Profile"}
+        </h1>
+        <p className="text-white/80 mb-6 text-sm">
+          {mode === "onboarding"
+            ? "Choose a nickname and optionally upload a photo"
+            : "Update your nickname and/or profile photo"}
+        </p>
+
+        <div className="mt-6 flex flex-col items-center">
+          <div className="w-24 h-24 rounded-full overflow-hidden border border-white/15 flex items-center justify-center">
+            {currentImage ? (
+              <img
+                src={currentImage}
+                alt="Profile photo"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <img
+                src="/images/avatar.png"
+                alt="Avatar"
+                className="w-full h-full object-cover"
+              />
+            )}
+          </div>
+          {photoUrl && (
+            <button
+              onClick={removePhoto}
+              className="mt-2 text-white text-sm underline cursor-pointer"
+            >
+              Remove profile photo
+            </button>
+          )}
+          <label className="flex flex-col items-center text-sm cursor-pointer">
+            <span className="my-3 inline-flex items-center justify-center rounded-xl border border-white/25 bg-white/10 px-4 py-3 text-sm font-semibold text-white/90 hover:bg-white/15 transition">
+              {mode === "onboarding"
+                ? "Upload profile picture"
+                : "Change profile picture"}
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoChange}
+              className="hidden"
+            />
+          </label>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col items-center">
+          <label className="flex flex-col items-center gap-3 my-5">
+            <span>
+              {mode === "onboarding" && "Choose a nickname"}
+              {mode === "update" && "Update Nickname"}
+            </span>
+            <input
+              type="text"
+              placeholder="nickname"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              className="rounded-xl border border-white/25 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/60 focus:outline-none"
+            />
+          </label>
+
+          <button
+            type="submit"
+            disabled={isSaving}
+            className="mt-2 w-full max-w-xs py-3 rounded-xl border border-amber-300/60 bg-amber-400/30 font-semibold text-sm cursor-pointer hover:bg-amber-400/35 disabled:opacity-60 "
+          >
+            {isSaving
+              ? "Saving..."
+              : mode === "onboarding"
+              ? "Save & continue"
+              : "Save changes"}
+          </button>
+        </form>
+        {mode === "update" && (
+          <>
+            <button
+              type="button"
+              onClick={handleDeleteClick}
+              disabled={isDeleting}
+              className={`mt-4 w-full max-w-xs py-3 rounded-xl border font-semibold text-sm transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
+                confirmDelete
+                  ? "border-red-500/40 bg-red-500/30 text-white hover:bg-red-500/40"
+                  : "border-red-500/25 bg-red-500/10 text-white/85 hover:bg-red-500/15"
+              }`}
+            >
+              {isDeleting
+                ? "Deleting account..."
+                : confirmDelete
+                ? "Confirm delete account"
+                : "Delete account"}{" "}
+            </button>
+          </>
         )}
       </div>
-
-      <form onSubmit={handleSubmit} className="flex flex-col items-center">
-        <label className="flex flex-col items-center gap-3 my-5">
-          <span>
-            {mode === "onboarding" && "Choose a nickname"}
-            {mode === "update" && "Update Nickname"}
-          </span>
-          <input
-            type="text"
-            placeholder="nickname"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-            className="bg-white text-black"
-          />
-        </label>
-
-        {error && <p className="text-red-600">{error}</p>}
-        <button
-          type="submit"
-          disabled={isSaving}
-          className="mt-2 border rounded px-3 py-1 disabled:opacity-60"
-        >
-          {isSaving ? "Saving..." : "Save & continue"}
-        </button>
-      </form>
-      {mode === "update" && (
-        <>
-          <button
-            type="button"
-            onClick={handleDeleteClick}
-            disabled={isDeleting}
-            className={`mt-2 border rounded px-3 py-1 disabled:opacity-60 ${
-              confirmDelete ? "border-red-500 text-red-500" : ""
-            }`}
-          >
-            {isDeleting
-              ? "Deleting account..."
-              : confirmDelete
-              ? "Confirm delete account"
-              : "Delete account"}{" "}
-          </button>
-
-          {deleteError && (
-            <p className="text-red-500 text-sm mt-2">{deleteError}</p>
-          )}
-        </>
-      )}
     </div>
   );
 };
