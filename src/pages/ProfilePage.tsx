@@ -185,7 +185,7 @@ export const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center text-center px-4">
+    <div className="h-dvh overflow-y-auto flex flex-col items-center justify-start text-center px-4 pt-20 pb-4">
       <div className="w-full max-w-md rounded-2xl bg-white/5 border border-white/15 backdrop-blur-xs px-6 py-8 shadow-xl">
         <p className="mb-4 h-8 w-full max-w-md">
           {(error || thumbnailError || deleteError) && (
