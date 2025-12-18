@@ -6,7 +6,7 @@ import type { ZupUser } from "../types/user";
 import { AccessModal } from "../components/AccessModal";
 
 const EXCLUSIVE_ACCESS_CODE =
-  import.meta.env.VITE_EXCLUSIVE_ACCESS_CODE ?? "kanot";
+  import.meta.env.VITE_EXCLUSIVE_ACCESS_CODE ?? "fed24";
 
 const BG = {
   hero: "/backgrounds/heroverse/bg-night.webp",
