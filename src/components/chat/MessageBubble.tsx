@@ -42,7 +42,7 @@ export default function MessageBubble({
           `}
         >
           <span className="font-chat text-xs text-white/80">
-            {isOwn && message.userNickname}
+            {!isOwn && message.userNickname}
           </span>
           <span>{formatTime(message.createdAt)}</span>
         </div>
