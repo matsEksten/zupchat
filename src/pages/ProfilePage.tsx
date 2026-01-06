@@ -1,6 +1,13 @@
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../firebase/config";
 import { useState, type FormEvent, type ChangeEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { upsertUserProfile, getUserProfile } from "../services/userService";
+import {
+  upsertUserProfile,
+  getUserProfile,
+  validateNickname,
+  isNicknameTaken,
+} from "../services/userService";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { Spinner } from "../components/Spinner";
 import {
@@ -14,6 +21,9 @@ type ProfileMode = "loading" | "error" | "onboarding" | "update";
 
 export const ProfilePage = () => {
   const [nickname, setNickname] = useState("");
+  const [originalNicknameLower, setOriginalNicknameLower] = useState<
+    string | null
+  >(null);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [mode, setMode] = useState<ProfileMode>("loading");
@@ -39,10 +49,12 @@ export const ProfilePage = () => {
 
         if (!profile) {
           setMode("onboarding");
+          setOriginalNicknameLower(null);
           return;
         }
 
         setNickname(profile.displayName);
+        setOriginalNicknameLower(profile.displayName.trim().toLowerCase());
         setPhotoUrl(profile.photoURL ?? null);
         setPhotoPreview(null);
         setMode("update");
@@ -64,8 +76,9 @@ export const ProfilePage = () => {
 
     const trimmedNickname = nickname.trim();
 
-    if (!trimmedNickname) {
-      setError("Nickname is required");
+    const validationMsg = validateNickname(trimmedNickname);
+    if (validationMsg) {
+      setError(validationMsg);
       return;
     }
 
@@ -78,6 +91,22 @@ export const ProfilePage = () => {
 
       if (photoFile) {
         uploadedUrl = await uploadProfilePhoto(user.uid, photoFile);
+      }
+
+      const newKey = trimmedNickname.toLowerCase();
+      const unchanged = mode === "update" && newKey === originalNicknameLower;
+
+      if (!unchanged) {
+        const taken = await isNicknameTaken(trimmedNickname);
+        if (taken) {
+          setError("Nickname is already taken.");
+          return;
+        }
+
+        await setDoc(doc(db, "usernames", newKey), {
+          uid: user.uid,
+          createdAt: serverTimestamp(),
+        });
       }
 
       await upsertUserProfile(user.uid, {
